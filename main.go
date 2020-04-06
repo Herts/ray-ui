@@ -9,7 +9,7 @@ import (
 )
 
 func init() {
-	viper.AddConfigPath(".")
+	viper.AddConfigPath("./conf")
 	if err := viper.ReadInConfig(); err != nil {
 		log.Fatal(err)
 	}
