@@ -5,9 +5,11 @@ import (
 )
 
 type User struct {
-	gorm.Model `json:"-"`
-	Email      string `gorm:"primary_key" json:"email"`
-	UserId     string `json:"userId"`
+	gorm.Model       `json:"-"`
+	Email            string `gorm:"primary_key" json:"email"`
+	UserId           string `json:"userId"`
+	UpDataConsumed   int64  `json:"upDataConsumed"`
+	DownDataConsumed int64  `json:"downDataConsumed"`
 }
 
 type UserData struct {
@@ -39,4 +41,12 @@ func GetUserDataOneDayOnServer(email string, day string, region string, index in
 		Region: region,
 		Index:  index})
 	return &ud
+}
+
+func SaveUserData(ud *UserData) {
+	db.Save(ud)
+}
+
+func SumUserData() {
+	db.Exec("CALL sum_user_data();")
 }

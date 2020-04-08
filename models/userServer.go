@@ -21,6 +21,14 @@ func GetAllUserServers() (userServers []*UserServer) {
 	return
 }
 
-func AddUserServer(us *UserServer) {
+func SaveUserServer(us *UserServer) {
 	db.Save(us)
+}
+
+func GetUserOnServer(email string, region string, index int) *UserServer {
+	var userServer UserServer
+	db.FirstOrInit(&userServer, UserServer{Email: email,
+		Region: region,
+		Index:  index})
+	return &userServer
 }

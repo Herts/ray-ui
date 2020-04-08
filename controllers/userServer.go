@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"../models"
 	"encoding/json"
+	"github.com/Herts/ray-ui/models"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
 )
@@ -25,5 +25,5 @@ func (c *UserServerController) CreateUserServer() {
 		return
 	}
 
-	models.AddUserServer(&us)
+	models.SaveUserServer(&us)
 }
