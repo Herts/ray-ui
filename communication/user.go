@@ -18,11 +18,8 @@ func RemoteServer(region string, index int) *models.RemoteServer {
 	return s
 }
 
-func AllUserDataOnServer(region string, index int, startDate, endDate string) (ds []*models.UserData) {
-	s, _, req := MakeRequest(region, index, "/api/user/listData")
-	if s.ApiKey == "" {
-		return
-	}
+func AllUserDataOnServer(region string, index int, startDate, endDate, host, apiKey string) (ds []*models.UserData) {
+	_, req := MakeRequest(host, apiKey, "/api/user/listData")
 	resp := response{Data: &ds}
 	req.Query(fmt.Sprintf("startDate=%s&endDate=%s", startDate, endDate)).
 		EndStruct(&resp)
@@ -33,19 +30,18 @@ func AllUserDataOnServer(region string, index int, startDate, endDate string) (d
 	return
 }
 
-func MakeRequest(region string, index int, path string) (*models.RemoteServer, url.URL, *gorequest.SuperAgent) {
-	s := RemoteServer(region, index)
+func MakeRequest(host string, apiKey string, path string) (url.URL, *gorequest.SuperAgent) {
 	u := url.URL{
 		Scheme: "https",
-		Host:   s.Host,
+		Host:   host,
 		Path:   path,
 	}
-	req := gorequest.New().Get(u.String()).Set("Authorization", s.ApiKey)
-	return s, u, req
+	req := gorequest.New().Get(u.String()).Set("Authorization", apiKey)
+	return u, req
 }
 
-func UpdateAllUserDataOnServer(region string, index int, startDate, endDate string) {
-	ds := AllUserDataOnServer(region, index, startDate, endDate)
+func UpdateAllUserDataOnServer(region string, index int, startDate, endDate, host, apiKey string) {
+	ds := AllUserDataOnServer(region, index, startDate, endDate, host, apiKey)
 	for _, d := range ds {
 		data := models.GetUserDataOneDayOnServer(d.Email, d.Date, d.Region, d.Index)
 		d.Model = data.Model
@@ -53,8 +49,8 @@ func UpdateAllUserDataOnServer(region string, index int, startDate, endDate stri
 	}
 }
 
-func AllUserOnServer(region string, index int) (userServers []*models.UserServer) {
-	_, _, req := MakeRequest(region, index, "/api/user/list")
+func AllUserOnServer(region string, index int, host, apiKey string) (userServers []*models.UserServer) {
+	_, req := MakeRequest(host, apiKey, "/api/user/list")
 	resp := response{Data: &userServers}
 	req.EndStruct(&resp)
 	for _, us := range userServers {
@@ -64,8 +60,8 @@ func AllUserOnServer(region string, index int) (userServers []*models.UserServer
 	return
 }
 
-func RetrieveAllUserOnServer(region string, index int) {
-	userServers := AllUserOnServer(region, index)
+func RetrieveAllUserOnServer(region string, index int, host, apiKey string) {
+	userServers := AllUserOnServer(region, index, host, apiKey)
 	for _, d := range userServers {
 		data := models.GetUserOnServer(d.Email, d.Region, d.Index)
 		d.Model = data.Model
@@ -78,13 +74,13 @@ func RetrieveAllUserOnServer(region string, index int) {
 func RetrieveAllUserOnAllServers() {
 	servers := models.GetAllServers()
 	for _, s := range servers {
-		RetrieveAllUserOnServer(s.Region, s.Index)
+		RetrieveAllUserOnServer(s.Region, s.Index, s.Host, s.ApiKey)
 	}
 }
 
 func UpdateAllUserDataOnAllServers(startDate, endDate string) {
 	servers := models.GetAllServers()
 	for _, s := range servers {
-		UpdateAllUserDataOnServer(s.Region, s.Index, startDate, endDate)
+		UpdateAllUserDataOnServer(s.Region, s.Index, startDate, endDate, s.Host, s.ApiKey)
 	}
 }
