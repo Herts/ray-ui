@@ -10,6 +10,7 @@ type User struct {
 	UserId           string `json:"userId"`
 	UpDataConsumed   int64  `json:"upDataConsumed"`
 	DownDataConsumed int64  `json:"downDataConsumed"`
+	AccessToken      string `json:"accessToken"`
 }
 
 type UserData struct {

@@ -13,8 +13,15 @@ type V2RayConfigController struct {
 
 // @Param email path string true "User email"
 // @Param quan query bool false "Query quantumult config"
+// @Param token query string true "Access Token"
 // @router /get/:email [get]
-func (c *V2RayConfigController) GetUserServerV2rayConfig(email string, quan bool) {
+func (c *V2RayConfigController) GetUserServerV2rayConfig(email string, quan bool, token string) {
+	u := models.GetUser(email)
+	if u.AccessToken == "" || u.AccessToken != token {
+		c.Ctx.ResponseWriter.WriteHeader(401)
+		c.Ctx.ResponseWriter.Write([]byte("token is invalid or empty"))
+		return
+	}
 	configs := models.GetV2rayNConfigByEmail(email)
 	var configUrls string
 	for _, config := range configs {
