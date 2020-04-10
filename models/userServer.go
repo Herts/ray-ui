@@ -16,6 +16,26 @@ type UserServer struct {
 	AlterID          int     `json:"alterId,string"`
 }
 
+type VUserServer struct {
+	Email          string `json:"email"`
+	UserNickName   string `json:"userNickName"`
+	UserId         string `json:"userId"`
+	Enabled        bool   `json:"enabled"`
+	Level          int    `json:"level,string"`
+	AlterID        int    `json:"alterId,string"`
+	Region         string `json:"region"`
+	Index          int    `gorm:"auto_increment:false" json:"index"`
+	ServerNickName string
+	ServerName     string
+	Host           string
+	TlsName        string
+	Port           int
+	StreamSetting  string `json:"streamSetting"`
+	Path           string `json:"path"`
+	ConfsType      string `json:"confsType"`
+	Tls            string
+}
+
 func GetAllUserServers() (userServers []*UserServer) {
 	db.Find(&userServers)
 	return
@@ -31,4 +51,9 @@ func GetUserOnServer(email string, region string, index int) *UserServer {
 		Region: region,
 		Index:  index})
 	return &userServer
+}
+
+func GetVUserServerByEmail(email string) (us []*VUserServer) {
+	db.Where(VUserServer{Email: email}).Find(&us)
+	return
 }

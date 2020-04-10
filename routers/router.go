@@ -1,3 +1,5 @@
+// @APIVersion 1.0.0
+// @Title ray-ui API
 package routers
 
 import (
@@ -6,8 +8,23 @@ import (
 )
 
 func init() {
-	beego.Router("/", &controllers.MainController{})
-	beego.Router("/api/user/add", &controllers.UserController{}, "post:CreateUser")
+	beego.ErrorController(&controllers.ErrorController{})
+	ns := beego.NewNamespace("/api",
+		beego.NSNamespace("/server",
+			beego.NSInclude(&controllers.ServerController{}),
+		),
+		beego.NSNamespace("/user",
+			beego.NSInclude(&controllers.UserController{}),
+		),
+		beego.NSNamespace("/config",
+			beego.NSInclude(&controllers.V2RayConfigController{}),
+		),
+	)
+	beego.AddNamespace(ns)
 
-	beego.Router("/api/server/listAll", &controllers.ServerController{}, "get:ListAllServers")
+	//beego.Router("/", &controllers.MainController{})
+	//beego.Router("/api/user/add", &controllers.UserController{}, "post:CreateUser")
+	//
+	//beego.Router("/api/server/listAll", &controllers.ServerController{}, "get:ListAllServers")
+	//beego.Router("/", &controllers.UserServerController{})
 }
