@@ -18,6 +18,9 @@ type response struct {
 	Data    interface{} `json:"data,omitempty"`
 }
 
+// @Param body body true models.User "New user"
+// @router /create [post]
+// @Success 200 {response} response
 func (c *UserController) CreateUser() {
 	var newUser models.User
 	logs.Debug(string(c.Ctx.Input.RequestBody))
@@ -45,5 +48,18 @@ func (c *UserController) CreateUser() {
 
 	models.AddUser(&newUser)
 	c.Data["json"] = response{Message: fmt.Sprintf("User %s creation success", newUser.Email)}
+	c.ServeJSON()
+}
+
+// @router /listData [get]
+// @Success 200 {response} response
+func (c *UserController) ListAllUserData() {
+	uds := models.GetAllUserData()
+	tableData := [][]interface{}{}
+	for _, ud := range uds {
+		tableData = append(tableData, []interface{}{ud.Region, ud.Index, ud.Email, ud.Date,
+			ud.UpDataConsumed, ud.DownDataConsumed})
+	}
+	c.Data["json"] = response{Data: tableData}
 	c.ServeJSON()
 }

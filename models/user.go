@@ -51,3 +51,8 @@ func SaveUserData(ud *UserData) {
 func SumUserData() {
 	db.Exec("CALL sum_user_data();")
 }
+
+func GetAllUserData() (uds []*UserData) {
+	db.Find(&uds)
+	return
+}

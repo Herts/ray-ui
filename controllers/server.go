@@ -21,6 +21,8 @@ func (c *ServerController) CreateServer() {
 
 }
 
+// @router /list [get]
+// @Success 200 {[]*models.RemoteServer} []*models.RemoteServer
 func (c *ServerController) ListAllServers() {
 	servers := models.GetAllServers()
 

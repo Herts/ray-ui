@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/astaxie/beego/logs"
+	"strings"
 )
 
 type V2RayConfig struct {
@@ -48,7 +49,11 @@ func GetV2rayNConfigByEmail(email string) (configs []*V2RayConfig) {
 }
 
 func GetServerNickName(us *VUserServer) string {
-	return fmt.Sprintf("%s|%s|%s|%d", us.UserNickName, us.ServerNickName, us.Region, us.Index)
+	data := "∞"
+	if strings.HasPrefix(us.ServerNickName, "IPLC") {
+		data = "20G"
+	}
+	return fmt.Sprintf("%sG/%s|%s|%s|%d", us.UserNickName, data, us.ServerNickName, us.Region, us.Index)
 }
 
 func Base64EncodeV2rayN(config *V2RayConfig, protocol string) (configUrl string) {

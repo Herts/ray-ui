@@ -22,7 +22,9 @@ func init() {
 	)
 	beego.AddNamespace(ns)
 
-	//beego.Router("/", &controllers.MainController{})
+	beego.Router("/", &controllers.MainController{})
+	beego.Router("/index.html", &controllers.MainController{})
+	beego.Router("/tables.html", &controllers.MainController{}, "get:GetTable")
 	//beego.Router("/api/user/add", &controllers.UserController{}, "post:CreateUser")
 	//
 	//beego.Router("/api/server/listAll", &controllers.ServerController{}, "get:ListAllServers")

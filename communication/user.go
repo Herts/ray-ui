@@ -5,6 +5,7 @@ import (
 	"github.com/Herts/ray-ui/models"
 	"github.com/parnurzeal/gorequest"
 	"net/url"
+	"strings"
 )
 
 type response struct {
@@ -41,6 +42,9 @@ func MakeRequest(host string, apiKey string, path string) (url.URL, *gorequest.S
 }
 
 func UpdateAllUserDataOnServer(region string, index int, startDate, endDate, host, apiKey string) {
+	if strings.HasSuffix(region, "nat") {
+		return
+	}
 	ds := AllUserDataOnServer(region, index, startDate, endDate, host, apiKey)
 	for _, d := range ds {
 		data := models.GetUserDataOneDayOnServer(d.Email, d.Date, d.Region, d.Index)
@@ -67,6 +71,7 @@ func RetrieveAllUserOnServer(region string, index int, host, apiKey string) {
 		d.Model = data.Model
 		d.UpDataConsumed = data.UpDataConsumed
 		d.DownDataConsumed = data.DownDataConsumed
+		d.NickName = data.NickName
 		models.SaveUserServer(d)
 	}
 }
